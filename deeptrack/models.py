@@ -181,6 +181,7 @@ def Convolutional(
     steps_per_pooling=1,
     dropout=(),
     dense_top=True,
+    global_pooling=True,
     number_of_outputs=3,
     output_activation=None,
     output_kernel_size=3,
@@ -253,7 +254,10 @@ def Convolutional(
     # DENSE TOP
 
     if dense_top:
-        layer = layers.Flatten()(layer)
+        if global_pooling:
+            layer = layers.GlobalAveragePooling2D()(layer)
+        else:
+            layer = layers.Flatten()(layer)
         for dense_layer_dimension in dense_layers_dimensions:
             layer = dense_block(dense_layer_dimension)(layer)
         output_layer = layers.Dense(number_of_outputs, activation=output_activation)(
